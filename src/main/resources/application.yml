@@ -1,0 +1,68 @@
+server:
+  port: 8080
+  forward-headers-strategy: framework
+  servlet:
+    context-path: /api
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: library-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/library}
+    username: ${DB_USERNAME:library}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+        default_batch_fetch_size: 50
+  flyway:
+    enabled: true
+  jackson:
+    time-zone: America/Sao_Paulo
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+library:
+  policy:
+    loan-days: ${LOAN_DAYS:14}
+    max-active-loans: ${MAX_ACTIVE_LOANS:3}
+    reservation-hold: ${RESERVATION_HOLD:48h}
+    timezone: America/Sao_Paulo
+    expiry-check-interval: ${RESERVATION_EXPIRY_CHECK:5m}
+  jwt:
+    secret: ${JWT_SECRET}
+    issuer: library-api
+    access-ttl: ${JWT_ACCESS_TTL:15m}
+    refresh-ttl: ${JWT_REFRESH_TTL:7d}
+  security:
+    bcrypt-strength: ${BCRYPT_STRENGTH:10}
+  bootstrap:
+    name: ${BOOTSTRAP_LIBRARIAN_NAME:}
+    email: ${BOOTSTRAP_LIBRARIAN_EMAIL:}
+    password: ${BOOTSTRAP_LIBRARIAN_PASSWORD:}
